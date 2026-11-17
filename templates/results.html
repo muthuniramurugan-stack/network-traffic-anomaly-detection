@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Traffic Analysis Results</title>
+<style>
+body{margin:0;font-family:Arial;background:#101827;color:white}
+header{background:#17243a;padding:25px;text-align:center}
+h1{color:#60a5fa}
+main{max-width:1100px;margin:35px auto;padding:20px}
+.cards{display:flex;gap:20px;flex-wrap:wrap}
+.card{background:#1e293b;padding:25px;border-radius:12px;flex:1;min-width:180px;text-align:center}
+.number{font-size:32px;color:#60a5fa;font-weight:bold}
+table{width:100%;border-collapse:collapse;background:#1e293b;margin-top:25px}
+th,td{padding:13px;border-bottom:1px solid #334155;text-align:left}
+th{color:#60a5fa}
+a{display:inline-block;padding:12px 18px;margin:8px;background:#2563eb;color:white;text-decoration:none;border-radius:7px}
+.chart{width:100%;margin-top:25px}
+.empty{color:#4ade80}
+</style>
+</head>
+<body>
+<header>
+<h1>Network Traffic Analysis Results</h1>
+<p>Machine Learning Based Anomaly Detection</p>
+</header>
+<main>
+<div class="cards">
+<div class="card"><h3>Total Windows</h3><div class="number">{{ summary.total_windows }}</div></div>
+<div class="card"><h3>Detected Alerts</h3><div class="number">{{ summary.total_alerts }}</div></div>
+<div class="card"><h3>Normal Windows</h3><div class="number">{{ summary.normal_windows }}</div></div>
+</div>
+
+<h2>Detected Anomalies</h2>
+{% if alerts %}
+<table>
+<thead><tr><th>Source IP</th><th>Attack Type</th><th>Anomaly Score</th><th>Reason</th></tr></thead>
+<tbody>
+{% for alert in alerts %}
+<tr>
+<td>{{ alert.src }}</td>
+<td>{{ alert.likely_type }}</td>
+<td>{{ "%.4f"|format(alert.score) }}</td>
+<td>{{ alert.reason }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<h3 class="empty">No anomalies detected!</h3>
+{% endif %}
+
+<h2>Traffic Analysis Graph</h2>
+<img class="chart" src="{{ url_for('chart', job_id=job_id) }}" alt="Anomaly graph">
+
+<h2>Download Reports</h2>
+<a href="{{ url_for('download', job_id=job_id, filename='alerts.csv') }}">Alerts CSV</a>
+<a href="{{ url_for('download', job_id=job_id, filename='alerts.json') }}">Alerts JSON</a>
+<a href="{{ url_for('download', job_id=job_id, filename='all_windows.csv') }}">All Windows CSV</a>
+<a href="{{ url_for('download', job_id=job_id, filename='anomalies.png') }}">Analysis Graph</a>
+<a href="/">Analyse Another PCAP</a>
+</main>
+</body>
+</html>

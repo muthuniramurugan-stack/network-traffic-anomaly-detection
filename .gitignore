@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 .env
 data/real_traffic.pcap
+web_results/
+uploads/
